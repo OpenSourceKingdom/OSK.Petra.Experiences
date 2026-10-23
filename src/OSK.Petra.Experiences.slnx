@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="OSK.Petra.Experiences.UnitTests/OSK.Petra.Experiences.UnitTests.csproj" Id="ab077144-b5b2-4203-bb66-aba149cd5ab9" />
   <Project Path="OSK.Petra.Experiences/OSK.Petra.Experiences.csproj" />
 </Solution>
