@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace OSK.Petra.Experiences.Internal.Services;
 
-internal class ObjectiveContext : IObjectiveContext, IEnumerator<(IChallengeObjective Objective, ObjectiveState State)>
+internal class ObjectiveContext : IObjectiveContext, IEnumerator<(IChallengeObjective Objective, ObjectiveState State)?>
 {
     #region Variables
 
@@ -37,6 +37,7 @@ internal class ObjectiveContext : IObjectiveContext, IEnumerator<(IChallengeObje
             {
                 state = new()
                 {
+                    ObjectiveId = index,
                     Status = ObjectiveStatus.Active
                 };
                 challengeState.ObjectiveStates[index] = state;
@@ -50,18 +51,22 @@ internal class ObjectiveContext : IObjectiveContext, IEnumerator<(IChallengeObje
 
     #region IEnumerator
 
-    public (IChallengeObjective Objective, ObjectiveState State) Current => _objectiveStatePairs[_objectiveId];
+    public (IChallengeObjective Objective, ObjectiveState State)? Current { get; private set; }
 
-    object IEnumerator.Current => Current;
+    object? IEnumerator.Current => Current;
 
+    [MemberNotNullWhen(true, nameof(Current))]
     public bool MoveNext()
     {
+        _objectiveId++;
         if (_objectiveId >= _objectiveStatePairs.Count)
         {
+            _objectiveId = _objectiveStatePairs.Count;
+            Current = null;
             return false;
         }
 
-        _objectiveId++;
+        Current = _objectiveStatePairs[_objectiveId];
         return true;
     }
 
@@ -82,11 +87,16 @@ internal class ObjectiveContext : IObjectiveContext, IEnumerator<(IChallengeObje
 
     public void Resolve(bool satisfied)
     {
+        if (Current is null)
+        {
+            return;
+        }
+
         ResolvedStatus = satisfied
             ? ObjectiveStatus.Complete
             : ObjectiveStatus.Failed;
 
-        ChallengeFailed = Current.Objective.IsRequired && !satisfied;
+        ChallengeFailed = Current.Value.Objective.IsRequired && !satisfied;
     }
 
     public bool TryGetState<TState>([NotNullWhen(true)]out TState? state)
@@ -112,6 +122,7 @@ internal class ObjectiveContext : IObjectiveContext, IEnumerator<(IChallengeObje
 
         _challengeState.ObjectiveStates[_objectiveId] = new()
         {
+            ObjectiveId = _objectiveId,
             Status = ObjectiveStatus.Active,
             Data = state
         };

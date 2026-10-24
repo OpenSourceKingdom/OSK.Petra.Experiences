@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OSK.Petra.Experiences.Models;
+using System;
 
 namespace OSK.Petra.Experiences.Objectives.Timer;
 

@@ -3,14 +3,15 @@ using OSK.Petra.Experiences.Models;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net.NetworkInformation;
 
 namespace OSK.Petra.Experiences.Internal.Services;
 
-internal class ExperienceContext(IExperience experience, ExperienceState state, IExperienceContextProvider contextProvider) : IExperienceContext, IDisposable
+internal class ExperienceContext(IExperience experience, ExperienceState state, IExperienceContextProvider contextProvider) : IInternalExperienceContext
 {
     #region Variables
 
-    private IExperienceEnumerator _experienceEnumerator = experience.GetEnumerator(state.ChallengeStates.Max(kvp => kvp.Key));
+    private IExperienceEnumerator _experienceEnumerator = experience.GetEnumerator(state.ChallengeStates.Count is 0 ? 0 : state.ChallengeStates.Max(kvp => kvp.Key));
     private ActiveExperienceChallenge? _activeExperienceChallenge;
 
     #endregion
@@ -23,12 +24,16 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
 
     public void Start()
     {
-        if (Status is not ExperienceStatus.Available)
+        switch (Status)
         {
-            return;
+            case ExperienceStatus.Paused:
+                state.Status = ExperienceStatus.Active;
+                OnEvent?.Invoke(new ExperienceStatusChangeEvent(experience, ExperienceStatus.Active));
+                break;
+            case ExperienceStatus.Available:
+                CheckExperience();
+                break;
         }
-
-        CheckExperience();
     }
 
     public void Stop()
@@ -46,16 +51,16 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
         {
             case ExperienceStopBehavior.Pause:
                 state.Status = ExperienceStatus.Paused;
-                return;
+                break;
             case ExperienceStopBehavior.Reset:
                 state.Status = ExperienceStatus.Available;
 
                 _experienceEnumerator.Reset();
                 state.ChallengeStates.Clear();
-                return;
+                break;
             case ExperienceStopBehavior.End:
                 state.Status = Experience.IsRequired ? ExperienceStatus.Failed : ExperienceStatus.Abandoned;
-                return;
+                break;
         }
 
         state.IsPinned = false;
@@ -67,13 +72,18 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
         get => state.IsPinned;
         set 
         {
+            if (state.IsPinned == value)
+            {
+                return;
+            }
+
             state.IsPinned = value;
             OnEvent?.Invoke(new ExperiencePinEvent(experience, state.IsPinned));
         }
     }
 
     public ExperienceState GetState()
-        => state;
+        => state.Clone();
 
     #endregion
 
@@ -98,13 +108,13 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
         }
 
         _activeExperienceChallenge.Context.Reset();
-        while (_activeExperienceChallenge.Context.MoveNext() && _activeExperienceChallenge.Context.Current.Objective is IEventObjective eventObjective && _activeExperienceChallenge.Context.Current.State.Status is ObjectiveStatus.Active)
+        while (_activeExperienceChallenge.Context.MoveNext() && _activeExperienceChallenge.Context.Current.Value.Objective is IEventObjective eventObjective && _activeExperienceChallenge.Context.Current.Value.State.Status is ObjectiveStatus.Active)
         {
             eventObjective.ProcessEvent(_activeExperienceChallenge.Context, appEvent);
-            if (_activeExperienceChallenge.Context.ResolvedStatus.HasValue && _activeExperienceChallenge.Context.ResolvedStatus != _activeExperienceChallenge.Context.Current.State.Status)
+            if (_activeExperienceChallenge.Context.ResolvedStatus.HasValue && _activeExperienceChallenge.Context.ResolvedStatus != _activeExperienceChallenge.Context.Current.Value.State.Status)
             {
-                _activeExperienceChallenge.Context.Current.State.Status = _activeExperienceChallenge.Context.ResolvedStatus.Value;
-                OnEvent?.Invoke(new ObjectiveStatusChangeEvent(experience, _activeExperienceChallenge.Challenge, _activeExperienceChallenge.Context.Current.Objective, _activeExperienceChallenge.Context.ResolvedStatus.Value));
+                _activeExperienceChallenge.Context.Current.Value.State.Status = _activeExperienceChallenge.Context.ResolvedStatus.Value;
+                OnEvent?.Invoke(new ObjectiveStatusChangeEvent(experience, _activeExperienceChallenge.Challenge, _activeExperienceChallenge.Context.Current.Value.Objective, _activeExperienceChallenge.Context.ResolvedStatus.Value));
             }
         }
 
@@ -123,13 +133,13 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
         }
 
         _activeExperienceChallenge.Context.Reset();
-        while (_activeExperienceChallenge.Context.MoveNext() && _activeExperienceChallenge.Context.Current.Objective is ITimeObjective timeObjective && _activeExperienceChallenge.Context.Current.State.Status is ObjectiveStatus.Active)
+        while (_activeExperienceChallenge.Context.MoveNext() && _activeExperienceChallenge.Context.Current.Value.Objective is ITimeObjective timeObjective && _activeExperienceChallenge.Context.Current.Value.State.Status is ObjectiveStatus.Active)
         {
             timeObjective.ProcessTick(_activeExperienceChallenge.Context, deltaTime);
-            if (_activeExperienceChallenge.Context.ResolvedStatus.HasValue && _activeExperienceChallenge.Context.ResolvedStatus != _activeExperienceChallenge.Context.Current.State.Status)
+            if (_activeExperienceChallenge.Context.ResolvedStatus.HasValue && _activeExperienceChallenge.Context.ResolvedStatus != _activeExperienceChallenge.Context.Current.Value.State.Status)
             {
-                _activeExperienceChallenge.Context.Current.State.Status = _activeExperienceChallenge.Context.ResolvedStatus.Value;
-                OnEvent?.Invoke(new ObjectiveStatusChangeEvent(experience, _activeExperienceChallenge.Challenge, _activeExperienceChallenge.Context.Current.Objective, _activeExperienceChallenge.Context.ResolvedStatus.Value));
+                _activeExperienceChallenge.Context.Current.Value.State.Status = _activeExperienceChallenge.Context.ResolvedStatus.Value;
+                OnEvent?.Invoke(new ObjectiveStatusChangeEvent(experience, _activeExperienceChallenge.Challenge, _activeExperienceChallenge.Context.Current.Value.Objective, _activeExperienceChallenge.Context.ResolvedStatus.Value));
             }
         }
 
@@ -190,17 +200,17 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
         activeChallenge.Context.Reset();
         while (activeChallenge.Context.MoveNext())
         {
-            if (activeChallenge.Context.Current.State.Status is not ObjectiveStatus.Active)
+            if (activeChallenge.Context.Current.Value.State.Status is not ObjectiveStatus.Active)
             {
                 continue;
             }
 
-            activeChallenge.Context.Current.Objective.Resolve(activeChallenge.Context, ObjectiveResolutionInitiator.Challenge);
+            activeChallenge.Context.Current.Value.Objective.Resolve(activeChallenge.Context, ObjectiveResolutionInitiator.Challenge);
 
             // Defensive: an objective that doesn't report is treated as passing only if the challenge is passing
-            activeChallenge.Context.Current.State.Status = activeChallenge.Context.ResolvedStatus.GetValueOrDefault(challengeStatus is ChallengeStatus.Complete ? ObjectiveStatus.Complete : ObjectiveStatus.Failed);
+            activeChallenge.Context.Current.Value.State.Status = activeChallenge.Context.ResolvedStatus.GetValueOrDefault(challengeStatus is ChallengeStatus.Complete ? ObjectiveStatus.Complete : ObjectiveStatus.Failed);
 
-            OnEvent?.Invoke(new ObjectiveStatusChangeEvent(experience, activeChallenge.Challenge, activeChallenge.Context.Current.Objective, activeChallenge.Context.Current.State.Status));
+            OnEvent?.Invoke(new ObjectiveStatusChangeEvent(experience, activeChallenge.Challenge, activeChallenge.Context.Current.Value.Objective, activeChallenge.Context.Current.Value.State.Status));
         }
 
         // A settled guard can report failure, so re-check before declaring success
@@ -211,13 +221,13 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
 
     private ChallengeStatus EvaluateChallenge(ObjectiveContext context)
     {
-        var failedFlag = context.ChallengeFailed;   // capture in case Reset clears it
+        var failedFlag = context.ChallengeFailed;
         context.Reset();
 
         var waiting = false;
         while (context.MoveNext())
         {
-            var (objective, state) = (context.Current.Objective, context.Current.State);
+            var (objective, state) = (context.Current.Value.Objective, context.Current.Value.State);
             if (!objective.IsRequired)
             {
                 continue;
@@ -242,7 +252,7 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
 
     private void MoveToNextChallenge()
     {
-        var status = ExperienceStatus.Successful;
+        var status = ExperienceStatus.Complete;
         if (_experienceEnumerator.MoveNext(contextProvider.GetTransitionContext(state)))
         {
             status = ExperienceStatus.Active;
@@ -262,7 +272,7 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
                 objectiveContext.Reset();
                 while (objectiveContext.MoveNext())
                 {
-                    OnEvent.Invoke(new ObjectiveStatusChangeEvent(experience, _experienceEnumerator.Current, objectiveContext.Current.Objective, objectiveContext.Current.State.Status));
+                    OnEvent.Invoke(new ObjectiveAddedEvent(experience, _experienceEnumerator.Current, objectiveContext.Current.Value.Objective));
                 }
             }
 

@@ -14,9 +14,9 @@ public interface IExperienceService
 
     bool Remove(Guid experienceId);
 
-    IEnumerable<IExperienceContext> GetExperiences(ExperienceSearchOptions? searchOptions = null);
+    IEnumerable<IExperienceContext> GetContexts(ExperienceSearchOptions? searchOptions = null);
 
-    IExperienceContext? GetExperience(Guid experienceId);
+    IExperienceContext? GetContext(Guid experienceId);
 
     void Update(TimeSpan deltaTime);
 

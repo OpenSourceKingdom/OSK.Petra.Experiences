@@ -12,7 +12,7 @@ internal class ExperienceService(IExperienceContextProvider contextProvider) : I
 {
     #region Variables
 
-    private readonly Dictionary<Guid, ExperienceContext> _contextLookup = [];
+    private readonly Dictionary<Guid, IInternalExperienceContext> _contextLookup = [];
 
     #endregion
 
@@ -39,14 +39,14 @@ internal class ExperienceService(IExperienceContextProvider contextProvider) : I
         return context;
     }
 
-    public IExperienceContext? GetExperience(Guid experienceId)
+    public IExperienceContext? GetContext(Guid experienceId)
     {
         return _contextLookup.TryGetValue(experienceId, out var context)
             ? context
             : null;
     }
 
-    public IEnumerable<IExperienceContext> GetExperiences(ExperienceSearchOptions? searchOptions = null)
+    public IEnumerable<IExperienceContext> GetContexts(ExperienceSearchOptions? searchOptions = null)
     {
         var searchableExperiences = searchOptions?.StatusFilter is null || searchOptions.Value.StatusFilter.Length is 0
             ? _contextLookup.Values
@@ -97,7 +97,7 @@ internal class ExperienceService(IExperienceContextProvider contextProvider) : I
 
     #region Helpers
 
-    private IEnumerable<ExperienceContext> GetActiveExperiences()
+    private IEnumerable<IInternalExperienceContext> GetActiveExperiences()
         => _contextLookup.Values.Where(context => context.Status is ExperienceStatus.Active);
 
     #endregion

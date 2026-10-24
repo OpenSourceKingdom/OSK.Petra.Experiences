@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OSK.Petra.Experiences.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -187,11 +188,11 @@ public class CounterParameters: ObjectiveParameters
         return this;
     }
 
-    public CounterParameters NormalizeValue(bool normalize)
+    public CounterParameters NormalizeValue()
     {
         ValidateFrozen();
 
-        Normalize = normalize;
+        Normalize = true;
 
         return this;
     }

@@ -3,7 +3,7 @@ using System;
 
 namespace OSK.Petra.Experiences.Objectives.Timer;
 
-public class TimeObjective(TimerParameters parameters) : ObjectiveBase<TimerParameters>(parameters), ITimeObjective
+public class TimerObjective(TimerParameters parameters) : ObjectiveBase<TimerParameters>(parameters), ITimeObjective
 {
     #region ITimeObjective
 

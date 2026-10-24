@@ -25,8 +25,8 @@ internal class ExperienceTransitionContext(ExperienceState state, IExperienceSer
 
     public bool TryGetOutput<TOutput>(Guid experienceId, string key, [NotNullWhen(true)] out TOutput? output)
     {
-        var experienceContext = service.GetExperience(experienceId);
-        if (experienceContext is not null && experienceContext.TryGetOutput<TOutput>(key, out output))
+        var experienceContext = service.GetContext(experienceId);
+        if (experienceContext is not null && experienceContext.TryGetOutput(key, out output))
         {
             return true;
         }

@@ -6,7 +6,7 @@ namespace OSK.Petra.Experiences.Internal;
 
 internal interface IExperienceContextProvider
 {
-    ExperienceContext GetExperienceContext(IExperience experience, ExperienceState state);
+    IInternalExperienceContext GetExperienceContext(IExperience experience, ExperienceState state);
 
     ObjectiveContext GetObjectiveContext(ExperienceState experienceState, ChallengeState challengeState, IReadOnlyList<IChallengeObjective> objectives);
 

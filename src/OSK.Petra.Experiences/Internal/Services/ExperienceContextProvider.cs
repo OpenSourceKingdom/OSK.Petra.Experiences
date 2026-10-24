@@ -9,7 +9,7 @@ internal class ExperienceContextProvider(IServiceProvider services) : IExperienc
 {
     #region IExperienceContextProvider
 
-    public ExperienceContext GetExperienceContext(IExperience experience, ExperienceState state)
+    public IInternalExperienceContext GetExperienceContext(IExperience experience, ExperienceState state)
         => ActivatorUtilities.CreateInstance<ExperienceContext>(services, [experience, state ?? new()]);
 
     public ObjectiveContext GetObjectiveContext(ExperienceState experienceState, ChallengeState challengeState, IReadOnlyList<IChallengeObjective> objectives)

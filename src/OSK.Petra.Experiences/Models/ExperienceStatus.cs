@@ -6,7 +6,7 @@ public enum ExperienceStatus
     Available,
     Paused,
     Active,
-    Successful,
+    Complete,
     Failed,
     Abandoned
 }
