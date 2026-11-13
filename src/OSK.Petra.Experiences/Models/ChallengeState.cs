@@ -8,7 +8,7 @@ public class ChallengeState
 {
     #region Variables
 
-    public string ChallengeId { get; set; }
+    public required string ChallengeId { get; set; }
 
     public ChallengeStatus Status { get; set; }
 

@@ -14,7 +14,7 @@ internal class ObjectiveContext : IObjectiveContext
     private readonly ExperienceState _experienceState;
     private readonly ChallengeState _challengeState;
 
-    private string _objectiveId;
+    private string _objectiveId = string.Empty;
 
     #endregion
 

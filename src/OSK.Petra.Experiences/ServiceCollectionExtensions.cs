@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
             services.AddSingleton<IExperienceService, ExperienceService>();
             services.AddTransient<IExperienceContextProvider, ExperienceContextProvider>();
 
-            services.AddMessageRecipient<ExperienceMessageHandler>();
+            services.TryAddMessageRecipient<ExperienceMessageHandler>();
 
             return services;
         }

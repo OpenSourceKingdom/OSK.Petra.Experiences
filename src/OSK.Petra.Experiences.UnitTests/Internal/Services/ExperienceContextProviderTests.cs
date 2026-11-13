@@ -59,7 +59,10 @@ public class ExperienceContextProviderTests
     {
         // Arrange
         var experienceState = new ExperienceState();
-        var challengeState = new ChallengeState();
+        var challengeState = new ChallengeState()
+        {
+            ChallengeId = string.Empty
+        };
 
         // Act
         var context = _provider.GetObjectiveContext(experienceState, challengeState);

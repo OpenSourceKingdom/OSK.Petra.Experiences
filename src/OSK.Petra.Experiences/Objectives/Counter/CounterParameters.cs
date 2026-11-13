@@ -76,8 +76,8 @@ public class CounterParameters: ObjectiveParameters<CounterParameters, CounterSt
             {
                 (true, true) => CountComparison.GreaterThanOrEqual,
                 (true, false) => CountComparison.LessThanOrEqual,
-                (false, true) => CountComparison.GreaterThan,
-                (false, false) => CountComparison.LessThan
+                (false, true) => CountComparison.GreaterThanOrEqual,
+                (false, false) => CountComparison.LessThanOrEqual
             };
         }
 

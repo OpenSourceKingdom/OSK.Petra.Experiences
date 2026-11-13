@@ -52,7 +52,7 @@ public class CounterParametersTests
         });
 
         // Assert
-        Assert.Equal(CountComparison.GreaterThan, parameters.Comparison);
+        Assert.Equal(CountComparison.GreaterThanOrEqual, parameters.Comparison);
 
         Assert.NotNull(parameters.TargetIds);
         Assert.Contains("hello", parameters.TargetIds);

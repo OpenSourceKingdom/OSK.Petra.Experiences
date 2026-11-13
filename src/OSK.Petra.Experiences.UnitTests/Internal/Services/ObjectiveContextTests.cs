@@ -27,7 +27,10 @@ public class ObjectiveContextTests
     public void Constructor_NullExperienceState_ThrowsArgumentNullException()
     {
         // Arrange
-        var challengeState = new ChallengeState();
+        var challengeState = new ChallengeState()
+        {
+            ChallengeId = string.Empty
+        };
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => new ObjectiveContext(null!, challengeState, _mockServices.Object));
@@ -48,7 +51,10 @@ public class ObjectiveContextTests
     {
         // Arrange
         var experienceState = new ExperienceState();
-        var challengeState = new ChallengeState();
+        var challengeState = new ChallengeState()
+        {
+            ChallengeId = string.Empty
+        };
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => new ObjectiveContext(experienceState, challengeState, null!));
@@ -100,7 +106,10 @@ public class ObjectiveContextTests
     {
         // Arrange
         var experienceState = new ExperienceState();
-        var challengeState = new ChallengeState();
+        var challengeState = new ChallengeState()
+        {
+            ChallengeId = string.Empty
+        };
 
         var context = new ObjectiveContext(experienceState, challengeState, _mockServices.Object);
 
@@ -116,7 +125,10 @@ public class ObjectiveContextTests
     {
         // Arrange
         var experienceState = new ExperienceState();
-        var challengeState = new ChallengeState();
+        var challengeState = new ChallengeState()
+        {
+            ChallengeId = string.Empty
+        };
         var context = new ObjectiveContext(experienceState, challengeState, _mockServices.Object);
 
         // Act
@@ -138,7 +150,10 @@ public class ObjectiveContextTests
     {
         // Arrange
         var experienceState = new ExperienceState();
-        var challengeState = new ChallengeState();
+        var challengeState = new ChallengeState()
+        {
+            ChallengeId = string.Empty
+        };
         var context = new ObjectiveContext(experienceState, challengeState, _mockServices.Object);
 
         // Act & Assert
