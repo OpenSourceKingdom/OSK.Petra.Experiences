@@ -3,7 +3,7 @@ using System;
 
 namespace OSK.Petra.Experiences.Objectives.Counter;
 
-public class CounterObjective(CounterParameters parameters) : EventObjectiveBase<CounterParameters, ICounterEvent>(parameters)
+public class CounterObjective(CounterParameters parameters) : EventObjectiveBase<CounterParameters, CounterState, ICounterEvent>(parameters)
 {
     #region EventObjectiveBase Overrides
 
@@ -13,7 +13,7 @@ public class CounterObjective(CounterParameters parameters) : EventObjectiveBase
             ? counterState.Value
             : Parameters.InitialValue;
 
-        var reached = IsMet(state, Parameters.TargetValue, Parameters.Comparison);
+        var reached = IsMet(state, Parameters.ThresholdValue, Parameters.Comparison);
         var satisfied = Parameters.Expectation is ObjectiveExpectation.Met ? reached : !reached;
 
         context.Resolve(satisfied);
@@ -26,11 +26,11 @@ public class CounterObjective(CounterParameters parameters) : EventObjectiveBase
             return;
         }
 
-        var state = context.GetOrCreateState(_ => (CounterState)Parameters.TargetValue);
+        var state = context.GetOrCreateState(_ => (CounterState)Parameters.InitialValue);
         state = state.Value + counterEvent.Delta;
         context.SetState(state);
 
-        if (IsMet(state, Parameters.TargetValue, Parameters.Comparison))
+        if (IsMet(state, Parameters.ThresholdValue, Parameters.Comparison))
         {
             Resolve(context, ObjectiveResolutionInitiator.Self);
         }

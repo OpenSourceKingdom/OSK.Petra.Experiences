@@ -4,11 +4,11 @@ namespace OSK.Petra.Experiences.Models;
 
 public interface IExperienceChallenge
 {
-    int Id { get; }
+    string Id { get; }
 
     string Name { get; }
 
     string? Description { get; }
 
-    IReadOnlyList<IChallengeObjective> GetObjectives();
+    IReadOnlyList<IChallengeObjective> GetObjectives(IExperienceTransitionContext context);
 }

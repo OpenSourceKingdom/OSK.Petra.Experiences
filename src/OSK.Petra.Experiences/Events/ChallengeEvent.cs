@@ -2,7 +2,7 @@
 
 namespace OSK.Petra.Experiences.Events;
 
-public abstract class ChallengeEvent(IExperience experience, IExperienceChallenge challenge): ExperienceEvent(experience), IChallengeEvent
+public abstract class ChallengeEvent(IExperienceContext context, IExperienceChallenge challenge): ExperienceEvent(context), IChallengeEvent
 {
     public IExperienceChallenge Challenge { get; } = challenge;
 }

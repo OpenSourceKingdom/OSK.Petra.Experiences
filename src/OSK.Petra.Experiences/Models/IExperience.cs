@@ -14,9 +14,7 @@ public interface IExperience
 
     bool IsSecret { get; }
 
-    bool AllowStop { get; }
-
     ExperienceStopBehavior StopBehavior { get; }
 
-    IExperienceEnumerator GetEnumerator(int challengeId = 0);
+    IExperienceEnumerator GetEnumerator();
 }

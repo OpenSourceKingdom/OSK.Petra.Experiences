@@ -2,7 +2,7 @@
 
 namespace OSK.Petra.Experiences.Events;
 
-public class ExperienceStatusChangeEvent(IExperience experience, ExperienceStatus status): ExperienceEvent(experience)
+public class ExperienceStatusChangeEvent(IExperienceContext context, ExperienceStatus status): ExperienceEvent(context)
 {
     public ExperienceStatus Status { get; } = status;
 }

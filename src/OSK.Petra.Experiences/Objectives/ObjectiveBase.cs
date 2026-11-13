@@ -24,6 +24,8 @@ public abstract class ObjectiveBase<TParameters>: IChallengeObjective
 
     #region IChallengeObjective
 
+    public string Id => Parameters.Id;
+
     public string Name => Parameters.Name;
 
     public string? Description => Parameters.Description;
@@ -32,7 +34,13 @@ public abstract class ObjectiveBase<TParameters>: IChallengeObjective
 
     public ObjectiveResolutionBehavior ResolutionBehavior => Parameters.GetEffectiveResolutionBehavior();
 
+    public ICloneable? GetInitialValue()
+        => Parameters.GetInitialValue();
+
+    public abstract string GetValueText(ObjectiveState state);
+
     public abstract void Resolve(IObjectiveContext context, ObjectiveResolutionInitiator initiator);
+
 
     #endregion
 }

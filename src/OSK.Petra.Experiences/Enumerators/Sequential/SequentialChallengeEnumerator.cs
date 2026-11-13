@@ -5,13 +5,11 @@ using System.Linq;
 
 namespace OSK.Petra.Experiences.Enumerators.Sequential;
 
-public class SequentialChallengeEnumerator(IEnumerable<IExperienceChallenge> challenges, int? challengeIndex = null) : IExperienceEnumerator
+public class SequentialChallengeEnumerator(IEnumerable<IExperienceChallenge> challenges) : IExperienceEnumerator
 {
     #region Variables
 
-    private int _index = challengeIndex.HasValue
-        ? challengeIndex < 0 ? throw new ArgumentException(nameof(challengeIndex), "Challenge index must be greater than or equal to 0") : challengeIndex.Value
-        : -1;
+    private int _index = -1;
 
     private readonly IReadOnlyList<IExperienceChallenge> _challenges = challenges?.ToArray() ?? throw new ArgumentNullException(nameof(challenges));
 
@@ -23,6 +21,14 @@ public class SequentialChallengeEnumerator(IEnumerable<IExperienceChallenge> cha
 
     public bool MoveNext(IExperienceTransitionContext context)
     {
+        if (_index is -1)
+        {
+            _index = string.IsNullOrWhiteSpace(context.ActiveChallengeId)
+                ? 0
+                : challenges.Select((challenge, index) => (Challenge: challenge, Index: index))
+                            .FirstOrDefault(tuple => tuple.Challenge.Id.Equals(context.ActiveChallengeId, StringComparison.OrdinalIgnoreCase)).Index;
+        }
+
         if (Current is null && _index >= 0 && _index < _challenges.Count)
         {
             Current = _challenges[_index];

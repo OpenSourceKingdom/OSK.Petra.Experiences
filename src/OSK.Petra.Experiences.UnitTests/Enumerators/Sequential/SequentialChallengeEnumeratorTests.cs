@@ -1,7 +1,6 @@
 using Moq;
 using OSK.Petra.Experiences.Enumerators.Sequential;
 using OSK.Petra.Experiences.Models;
-using OSK.Petra.Experiences.UnitTests._Helpers;
 
 namespace OSK.Petra.Experiences.UnitTests.Enumerators.Sequential;
 
@@ -16,13 +15,6 @@ public class SequentialChallengeEnumeratorTests
         Assert.Throws<ArgumentNullException>(() => new SequentialChallengeEnumerator(null!));
     }
 
-    [Fact]
-    public void Constructor_NegativeChallengeIndex_ThrowsArgumentException()
-    {
-        // Arrange & Act & Assert
-        Assert.Throws<ArgumentException>(() => new SequentialChallengeEnumerator([], challengeIndex: -1));
-    }
-
     #endregion
 
     #region MoveNext
@@ -34,7 +26,7 @@ public class SequentialChallengeEnumeratorTests
         var enumerator = new SequentialChallengeEnumerator([]);
 
         // Act
-        var result = enumerator.MoveNext(null!);
+        var result = enumerator.MoveNext(Mock.Of<IExperienceTransitionContext>());
 
         // Assert
         Assert.False(result);
@@ -53,13 +45,13 @@ public class SequentialChallengeEnumeratorTests
         Assert.Null(enumerator.Current);
         while (tests > 0)
         {
-            Assert.True(enumerator.MoveNext(null!));
+            Assert.True(enumerator.MoveNext(Mock.Of<IExperienceTransitionContext>()));
             Assert.NotNull(enumerator.Current);
 
             tests--;
         }
 
-        Assert.False(enumerator.MoveNext(null!));
+        Assert.False(enumerator.MoveNext(Mock.Of<IExperienceTransitionContext>()));
         Assert.Null(enumerator.Current);
     }
 
@@ -68,11 +60,11 @@ public class SequentialChallengeEnumeratorTests
     {
         // Arrange
         var challenges = GetChallenges(3);
-        var enumerator = new SequentialChallengeEnumerator(challenges, challengeIndex: 1);
+        var enumerator = new SequentialChallengeEnumerator(challenges);
 
         // Act & Assert
-        Assert.True(enumerator.MoveNext(null!));
-        Assert.Equal(challenges[1], enumerator.Current);
+        Assert.True(enumerator.MoveNext(Mock.Of<IExperienceTransitionContext>()));
+        Assert.Equal(challenges[0], enumerator.Current);
     }
 
     #endregion
@@ -85,7 +77,7 @@ public class SequentialChallengeEnumeratorTests
         // Arrange
         var challenges = GetChallenges(3);
         var enumerator = new SequentialChallengeEnumerator(challenges);
-        Assert.True(enumerator.MoveNext(null!));
+        Assert.True(enumerator.MoveNext(Mock.Of<IExperienceTransitionContext>()));
         Assert.NotNull(enumerator.Current);
 
         // Act
@@ -95,7 +87,7 @@ public class SequentialChallengeEnumeratorTests
         Assert.Null(enumerator.Current);
 
         // Should be started at the start
-        Assert.True(enumerator.MoveNext(null!));
+        Assert.True(enumerator.MoveNext(Mock.Of<IExperienceTransitionContext>()));
         Assert.Equal(challenges[0], enumerator.Current);
     }
 
@@ -107,16 +99,16 @@ public class SequentialChallengeEnumeratorTests
         var enumerator = new SequentialChallengeEnumerator(challenges);
 
         // Exhaust all
-        Assert.True(enumerator.MoveNext(null!));
-        Assert.True(enumerator.MoveNext(null!));
-        Assert.True(enumerator.MoveNext(null!));
+        Assert.True(enumerator.MoveNext(Mock.Of<IExperienceTransitionContext>()));
+        Assert.True(enumerator.MoveNext(Mock.Of<IExperienceTransitionContext>()));
+        Assert.True(enumerator.MoveNext(Mock.Of<IExperienceTransitionContext>()));
 
         // Act
         enumerator.Reset();
 
         // Assert
         Assert.Null(enumerator.Current);
-        Assert.True(enumerator.MoveNext(null!));
+        Assert.True(enumerator.MoveNext(Mock.Of<IExperienceTransitionContext>()));
         Assert.Equal(challenges[0], enumerator.Current);
     }
 
@@ -131,7 +123,7 @@ public class SequentialChallengeEnumeratorTests
         {
             var mockChallenge = new Mock<IExperienceChallenge>();
             mockChallenge.SetupGet(m => m.Id)
-                .Returns(i);
+                .Returns($"{i}");
             list.Add(mockChallenge.Object);
         }
         return list;

@@ -2,7 +2,7 @@
 
 namespace OSK.Petra.Experiences.Events;
 
-public class ChallengeStatusChangeEvent(IExperience experience, IExperienceChallenge challenge, ChallengeStatus status): ChallengeEvent(experience, challenge)
+public class ChallengeStatusChangeEvent(IExperienceContext context, IExperienceChallenge challenge, ChallengeStatus status): ChallengeEvent(context, challenge)
 {
     public ChallengeStatus Status { get; } = status;
 }

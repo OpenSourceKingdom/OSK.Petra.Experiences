@@ -1,7 +1,5 @@
 using Moq;
-using OSK.Petra.Experiences.Models;
 using OSK.Petra.Experiences.Objectives.Counter;
-using OSK.Petra.Experiences.UnitTests._Helpers;
 
 namespace OSK.Petra.Experiences.UnitTests.Objectives.Counter;
 
@@ -15,7 +13,7 @@ public class CounterParametersTests
         // Arrange
         var test = false;
 
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10, c =>
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10, c =>
         {
             c.WithFilter(_ => test = true)
             .WithTargets(["hello"])
@@ -44,9 +42,10 @@ public class CounterParametersTests
     {
         // Arrange
         var test = false;
-        var parameters = CounterParameters.Limit("Keep below 5", targetValue: 5, c =>
+        var parameters = CounterParameters.Limit("Keep below 5", thresholdValue: 5, c =>
         {
-            c.WithFilter(_ => test = true)
+            c
+            .WithFilter(_ => test = true)
             .WithTargets(["hello"])
             .WithTags(["hello"])
             .NormalizeValue();
@@ -76,7 +75,7 @@ public class CounterParametersTests
     public void Freeze_Modify_ThrowsInvalidOperationException()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10);
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10);
 
         // Act
         parameters.Freeze();
@@ -89,7 +88,7 @@ public class CounterParametersTests
     public void Freeze_ModifyWithTargets_ThrowsInvalidOperationException()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10);
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10);
 
 
         // Act
@@ -103,7 +102,7 @@ public class CounterParametersTests
     public void Freeze_ModifyWithComparison_ThrowsInvalidOperationException()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10);
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10);
 
         // Act
         parameters.Freeze();
@@ -116,7 +115,7 @@ public class CounterParametersTests
     public void Freeze_ModifyWithFilter_ThrowsInvalidOperationException()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10);
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10);
 
 
         // Act
@@ -130,7 +129,7 @@ public class CounterParametersTests
     public void Freeze_ModifyNormalize_ThrowsInvalidOperationException()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10);
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10);
 
         // Act
         parameters.Freeze();
@@ -147,7 +146,7 @@ public class CounterParametersTests
     public void Matches_NullCounterEvent_ThrowsArgumentNullException()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10);
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10);
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => parameters.Matches(null!));
@@ -157,7 +156,7 @@ public class CounterParametersTests
     public void Matches_NoFilters_AcceptsAnyEvent()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10);
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10);
 
         var mockEvent = new Mock<ICounterEvent>();
 
@@ -172,7 +171,7 @@ public class CounterParametersTests
     public void Matches_WithTagsMatching_ReturnsTrue()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10, c =>
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10, c =>
         {
             c.WithTags(["wolf", "boss"]);
         });
@@ -192,7 +191,7 @@ public class CounterParametersTests
     public void Matches_WithTagsNoMatch_ReturnsFalse()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10, c =>
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10, c =>
         {
             c.WithTags(["wolf"]);
         });
@@ -212,7 +211,7 @@ public class CounterParametersTests
     public void Matches_WithTargetsMatching_ReturnsTrue()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10, c =>
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10, c =>
         {
             c.WithTargets(["enemy-42"]);
         });
@@ -232,7 +231,7 @@ public class CounterParametersTests
     public void Matches_WithNoTagsButFilter_PassthroughTagCheck()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10, c =>
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10, c =>
         {
             c.WithFilter(_ => true);
         });
@@ -250,7 +249,7 @@ public class CounterParametersTests
     public void Matches_WithTagCountZeroButHasTagFilter_FailsMatch()
     {
         // Arrange
-        var parameters = CounterParameters.Goal("Reach 10", targetValue: 10, c =>
+        var parameters = CounterParameters.Goal("Reach 10", thresholdValue: 10, c =>
         {
             c.WithTargets(["required"]);
         });

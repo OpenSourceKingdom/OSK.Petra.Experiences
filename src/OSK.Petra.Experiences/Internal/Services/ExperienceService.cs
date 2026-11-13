@@ -31,10 +31,24 @@ internal class ExperienceService(IExperienceContextProvider contextProvider) : I
             return context;
         }
 
-        context = contextProvider.GetExperienceContext(experience, options?.State ?? new());
+        context = contextProvider.GetExperienceContext(experience, new()
+        {
+            ActiveChallengeId = options?.ActiveChallengeId,
+            IsPinned = options?.IsPinned ?? false,
+            Status = options?.Status ?? ExperienceStatus.Available,
+            ChallengeStates = options?.ChallengeStates?.ToDictionary(s => s.ChallengeId, s => s.Clone(), StringComparer.OrdinalIgnoreCase) ?? new(StringComparer.OrdinalIgnoreCase),
+            Outputs = options?.Outputs ?? new(StringComparer.OrdinalIgnoreCase)
+        });
         _contextLookup[experience.Id] = context;
 
-        OnExperienceEvent?.Invoke(new ExperienceAddedEvent(experience));
+        context.OnEvent += OnExperienceEvent;
+
+        OnExperienceEvent?.Invoke(new ExperienceAddedEvent(context));
+
+        if (context.Status is ExperienceStatus.Active)
+        {
+            context.Start();
+        }
 
         return context;
     }
@@ -61,10 +75,11 @@ internal class ExperienceService(IExperienceContextProvider contextProvider) : I
     {
         if (_contextLookup.TryGetValue(experienceId, out var context))
         {
+            context.OnEvent -= OnExperienceEvent;
             context.Dispose();
 
             _contextLookup.Remove(experienceId);
-            OnExperienceEvent?.Invoke(new ExperienceRemovedEvent(context.Experience));
+            OnExperienceEvent?.Invoke(new ExperienceRemovedEvent(context));
 
             return true;
         }

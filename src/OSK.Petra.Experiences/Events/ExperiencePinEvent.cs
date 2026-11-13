@@ -2,7 +2,7 @@
 
 namespace OSK.Petra.Experiences.Events;
 
-public class ExperiencePinEvent(IExperience experience, bool isPinned): ExperienceEvent(experience)
+public class ExperiencePinEvent(IExperienceContext context, bool isPinned): ExperienceEvent(context)
 {
     public bool IsPinned { get; } = isPinned;
 }

@@ -6,6 +6,8 @@ public interface IExperienceContext
 {
     IExperience Experience { get; }
 
+    IChallengeDetails? ActiveChallenge { get; }
+
     ExperienceStatus Status { get; }
 
     bool Pinned { get; set; }

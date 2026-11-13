@@ -1,10 +1,12 @@
 ﻿using OSK.Petra.Experiences.Events;
 using OSK.Petra.Experiences.Models;
+using System;
 
 namespace OSK.Petra.Experiences.Objectives;
 
-public abstract class EventObjectiveBase<TParameters, TEvent>(TParameters parameters) : ObjectiveBase<TParameters>(parameters), IEventObjective
-    where TParameters : ObjectiveParameters
+public abstract class EventObjectiveBase<TParameters, TState, TEvent>(TParameters parameters) : ObjectiveBase<TParameters, TState>(parameters), IEventObjective
+    where TParameters : ObjectiveParameters<TParameters, TState>
+    where TState : ICloneable
     where TEvent : IApplicationExperienceEvent
 {
     #region IEventObjective

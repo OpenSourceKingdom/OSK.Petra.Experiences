@@ -21,8 +21,6 @@ public class TestExperience() : IExperience
 
     public ExperienceStopBehavior StopBehavior { get; init; } = ExperienceStopBehavior.Pause;
 
-    public IExperienceEnumerator GetEnumerator(int challengeId = 0)
-    {
-        return new SequentialChallengeEnumerator(_challenges, challengeId);
-    }
+    public IExperienceEnumerator GetEnumerator()
+        => new SequentialChallengeEnumerator(_challenges);
 }

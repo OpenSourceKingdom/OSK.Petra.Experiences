@@ -4,9 +4,6 @@ using OSK.Petra.Experiences.Internal;
 using OSK.Petra.Experiences.Internal.Services;
 using OSK.Petra.Experiences.Models;
 using OSK.Petra.Experiences.Options;
-using OSK.Petra.Experiences.UnitTests._Helpers;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace OSK.Petra.Experiences.UnitTests.Internal.Services;
 
@@ -168,10 +165,7 @@ public class ExperienceServiceTests
 
         _service.Add(exp1.Object, new()
         {
-            State = new()
-            {
-                Status = ExperienceStatus.Active
-            }
+            Status = ExperienceStatus.Active
         });
         _service.Add(exp2.Object);
 
@@ -304,10 +298,7 @@ public class ExperienceServiceTests
 
         var ctx1 = _service.Add(exp1.Object, new()
         {
-            State = new()
-            {
-                Status = ExperienceStatus.Active
-            }
+            Status = ExperienceStatus.Active
         });
         var ctx2 = _service.Add(exp2.Object);
         ctx1.Pinned = true;
@@ -337,10 +328,7 @@ public class ExperienceServiceTests
 
         _service.Add(exp1.Object, new()
         {
-            State = new()
-            {
-                Status = ExperienceStatus.Active
-            }
+            Status = ExperienceStatus.Active
         });
         _service.Add(exp2.Object);
 

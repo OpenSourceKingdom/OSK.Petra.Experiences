@@ -2,6 +2,7 @@
 
 public enum ExperienceStopBehavior
 {
+    None,
     Reset,
     Pause,
     End

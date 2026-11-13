@@ -1,5 +1,7 @@
-﻿namespace OSK.Petra.Experiences.Events;
+﻿using OSK.Messages.Abstractions;
 
-public interface IApplicationExperienceEvent
+namespace OSK.Petra.Experiences.Events;
+
+public interface IApplicationExperienceEvent: IMessage
 {
 }

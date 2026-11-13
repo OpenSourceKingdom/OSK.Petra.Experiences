@@ -2,6 +2,6 @@
 
 namespace OSK.Petra.Experiences.Events;
 
-public class ExperienceRemovedEvent(IExperience experience): ExperienceEvent(experience)
+public class ExperienceRemovedEvent(IExperienceContext context): ExperienceEvent(context)
 {
 }

@@ -3,34 +3,35 @@ using System;
 
 namespace OSK.Petra.Experiences.Objectives.Timer;
 
-public class TimerParameters: ObjectiveParameters
+public class TimerParameters: ObjectiveParameters<TimerParameters, TimerState>
 {
     #region Static
 
-    public static TimerParameters Duration(string name, TimeSpan timer, bool isRequired = true)
-        => Duration(name, string.Empty, timer, isRequired);
+    public static TimerParameters Duration(string id, TimeSpan timer, Action<TimerParameters>? configure = null)
+        => Duration(id, string.Empty, timer, configure);
 
-    public static TimerParameters Duration(string name, string description, TimeSpan timer, bool isRequired = true)
-        => Create(name, description, timer, isRequired, ObjectiveExpectation.Met);
+    public static TimerParameters Duration(string id, string description, TimeSpan timer, Action<TimerParameters>? configure = null)
+        => Create(id, description, timer, ObjectiveExpectation.Met, configure);
 
-    public static TimerParameters Alarm(string name, TimeSpan timer, bool isRequired = true)
-        => Alarm(name, string.Empty, timer, isRequired);
+    public static TimerParameters Alarm(string id, TimeSpan timer, Action<TimerParameters>? configure = null)
+        => Alarm(id, string.Empty, timer, configure);
 
-    public static TimerParameters Alarm(string name, string description, TimeSpan timer, bool isRequired = true)
-        => Create(name, description, timer, isRequired, ObjectiveExpectation.NotMet);
+    public static TimerParameters Alarm(string id, string description, TimeSpan timer, Action<TimerParameters>? configure = null)
+        => Create(id, description, timer, ObjectiveExpectation.NotMet, configure);
 
-    internal static TimerParameters Create(string name, string description, TimeSpan timer, bool isRequired, ObjectiveExpectation expectation)
+    internal static TimerParameters Create(string id, string description, TimeSpan timer, ObjectiveExpectation expectation, Action<TimerParameters>? configure = null)
     {
         var parameters = new TimerParameters()
         {
-            Name = name,
-            Description = description,
-            IsRequired = isRequired,
+            Id = id,
             Timer = timer,
             Expectation = expectation
         };
 
+        configure?.Invoke(parameters);
+
         parameters.Validate();
+        parameters.Freeze();
 
         return parameters;
     }
@@ -52,6 +53,12 @@ public class TimerParameters: ObjectiveParameters
             throw new InvalidOperationException("A timer can not be less than or equal to zero.");
         }
     }
+
+    protected override IChallengeObjective CreateObjective()
+        => new TimerObjective(this);
+
+    protected override TimerState GetInitialState()
+        => Timer;
 
     #endregion
 }

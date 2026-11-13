@@ -11,6 +11,8 @@ internal class ExperienceTransitionContext(ExperienceState state, IExperienceSer
 
     public IServiceProvider Services => services;
 
+    public string? ActiveChallengeId => state.ActiveChallengeId;
+
     public bool TryGetOutput<TOutput>(string key, [NotNullWhen(true)] out TOutput? output)
     {
         if (state.Outputs.TryGetValue(key, out var o) && o is TOutput typedOutput)

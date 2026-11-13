@@ -22,6 +22,9 @@ public readonly struct TimerState: ICloneable
 
     #region Operators
 
+    public override string ToString()
+        => Value.ToString();
+
     public static implicit operator TimeSpan(TimerState state)
         => state.Value;
 

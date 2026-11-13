@@ -1,8 +1,6 @@
 using Moq;
-using OSK.Petra.Experiences.Internal.Services;
 using OSK.Petra.Experiences.Models;
 using OSK.Petra.Experiences.Objectives.Timer;
-using System.Collections.Generic;
 
 namespace OSK.Petra.Experiences.UnitTests.Objectives.Timer;
 
@@ -30,7 +28,7 @@ public class TimerObjectiveTests
     {
         // Arrange
         var mockContext = new Mock<IObjectiveContext>();
-        var timer = new TimerObjective(new() { Name = "Abc", Timer = TimeSpan.FromMinutes(1)});
+        var timer = new TimerObjective(new() { Id = "Abc", Timer = TimeSpan.FromMinutes(1)});
 
         // Act
         timer.ProcessTick(mockContext.Object, TimeSpan.FromSeconds(30));
@@ -55,7 +53,7 @@ public class TimerObjectiveTests
         mockContext.Setup(m => m.TryGetState(out s))
             .Returns(true);
 
-        var timer = new TimerObjective(new() { Name = "Abc", Timer = TimeSpan.FromMinutes(1) });
+        var timer = new TimerObjective(new() { Id = "Abc", Timer = TimeSpan.FromMinutes(1) });
 
         // Act
         timer.ProcessTick(mockContext.Object, TimeSpan.FromSeconds(30));
@@ -84,7 +82,7 @@ public class TimerObjectiveTests
         mockContext.Setup(m => m.TryGetState(out s))
             .Returns(true);
 
-        var timer = new TimerObjective(new() { Name = "Abc", Timer = TimeSpan.FromMinutes(1) });
+        var timer = new TimerObjective(new() { Id = "Abc", Timer = TimeSpan.FromMinutes(1) });
 
         // Act
         timer.ProcessTick(mockContext.Object, TimeSpan.FromMinutes(1));
@@ -99,7 +97,7 @@ public class TimerObjectiveTests
     {
         // Arrange
         var mockContext = new Mock<IObjectiveContext>();
-        var timer = new TimerObjective(new() { Name = "Abc", Timer = TimeSpan.FromMinutes(1) });
+        var timer = new TimerObjective(new() { Id = "Abc", Timer = TimeSpan.FromMinutes(1) });
 
         // Act
         timer.ProcessTick(mockContext.Object, TimeSpan.FromMinutes(1));

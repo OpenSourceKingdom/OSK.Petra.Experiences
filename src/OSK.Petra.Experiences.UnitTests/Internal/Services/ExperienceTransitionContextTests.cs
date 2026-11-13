@@ -1,9 +1,7 @@
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using OSK.Petra.Experiences.Internal.Services;
 using OSK.Petra.Experiences.Models;
 using OSK.Petra.Experiences.Ports;
-using OSK.Petra.Experiences.UnitTests._Helpers;
 
 namespace OSK.Petra.Experiences.UnitTests.Internal.Services;
 

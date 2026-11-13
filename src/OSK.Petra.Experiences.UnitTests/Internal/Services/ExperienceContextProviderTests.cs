@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using OSK.Petra.Experiences;
 using OSK.Petra.Experiences.Internal;
 using OSK.Petra.Experiences.Internal.Services;
 using OSK.Petra.Experiences.Models;
@@ -61,10 +60,9 @@ public class ExperienceContextProviderTests
         // Arrange
         var experienceState = new ExperienceState();
         var challengeState = new ChallengeState();
-        var objectives = new List<IChallengeObjective>();
 
         // Act
-        var context = _provider.GetObjectiveContext(experienceState, challengeState, objectives);
+        var context = _provider.GetObjectiveContext(experienceState, challengeState);
 
         // Assert
         Assert.NotNull(context);

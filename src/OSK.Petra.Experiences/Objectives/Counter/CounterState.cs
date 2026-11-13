@@ -22,6 +22,9 @@ public readonly struct CounterState : ICloneable
 
     #region Operators
 
+    public override string ToString()
+        => Value.ToString();
+
     public static implicit operator long(CounterState state)
         => state.Value;
 

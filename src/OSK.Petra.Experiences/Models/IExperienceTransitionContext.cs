@@ -7,6 +7,8 @@ public interface IExperienceTransitionContext
 {
     IServiceProvider Services { get; }
 
+    string? ActiveChallengeId { get; }
+
     bool TryGetOutput<TOutput>(string key, [NotNullWhen(true)] out TOutput? output);
 
     bool TryGetOutput<TOutput>(Guid experienceId, string key, [NotNullWhen(true)] out TOutput? output);

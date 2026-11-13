@@ -3,8 +3,6 @@ using OSK.Petra.Experiences.Events;
 using OSK.Petra.Experiences.Internal;
 using OSK.Petra.Experiences.Internal.Services;
 using OSK.Petra.Experiences.Models;
-using OSK.Petra.Experiences.UnitTests._Helpers;
-using System.Net.NetworkInformation;
 
 namespace OSK.Petra.Experiences.UnitTests.Internal.Services;
 
@@ -65,6 +63,30 @@ public class ExperienceContextTests
     }
 
     [Fact]
+    public void Start_ActiveStatus_NoActiveChallenge_InitializesAndFiresEvent()
+    {
+        // Arrange
+        var triggeredCount = 0;
+        _context.OnEvent += experienceEvent =>
+        {
+            if (experienceEvent is ExperienceStatusChangeEvent)
+            {
+                triggeredCount++;
+            }
+        };
+        _state.Status = ExperienceStatus.Active;
+
+        // Act
+        _context.Start();
+
+        // Assert
+
+        // No Challenges, so completes
+        Assert.Equal(ExperienceStatus.Complete, _context.Status);
+        Assert.Equal(1, triggeredCount);
+    }
+
+    [Fact]
     public void Start_PausedStatus_SetsToActiveAndFiresEvent()
     {
         // Arrange
@@ -87,7 +109,6 @@ public class ExperienceContextTests
     }
 
     [Theory]
-    [InlineData(ExperienceStatus.Active)]
     [InlineData(ExperienceStatus.Abandoned)]
     [InlineData(ExperienceStatus.Complete)]
     [InlineData(ExperienceStatus.Failed)]
@@ -131,8 +152,6 @@ public class ExperienceContextTests
             }
         };
 
-        _mockExperience.Setup(m => m.AllowStop)
-            .Returns(true);
         _mockExperience.Setup(m => m.StopBehavior)
             .Returns(ExperienceStopBehavior.Pause);
 
@@ -164,8 +183,6 @@ public class ExperienceContextTests
             }
         };
 
-        _mockExperience.Setup(m => m.AllowStop)
-            .Returns(true);
         _mockExperience.Setup(m => m.StopBehavior)
             .Returns(ExperienceStopBehavior.Pause);
 
@@ -192,8 +209,8 @@ public class ExperienceContextTests
             }
         };
 
-        _mockExperience.Setup(m => m.AllowStop)
-            .Returns(false);
+        _mockExperience.Setup(m => m.StopBehavior)
+            .Returns(ExperienceStopBehavior.None);
 
         _state.Status = ExperienceStatus.Active;
 
@@ -218,8 +235,6 @@ public class ExperienceContextTests
             }
         };
 
-        _mockExperience.Setup(m => m.AllowStop)
-            .Returns(true);
         _mockExperience.Setup(m => m.StopBehavior)
             .Returns(ExperienceStopBehavior.Reset);
 
@@ -246,8 +261,6 @@ public class ExperienceContextTests
             }
         };
 
-        _mockExperience.Setup(m => m.AllowStop)
-            .Returns(true);
         _mockExperience.Setup(m => m.StopBehavior)
             .Returns(ExperienceStopBehavior.End);
         _mockExperience.Setup(m => m.IsRequired)
@@ -276,8 +289,6 @@ public class ExperienceContextTests
             }
         };
 
-        _mockExperience.Setup(m => m.AllowStop)
-            .Returns(true);
         _mockExperience.Setup(m => m.StopBehavior)
             .Returns(ExperienceStopBehavior.End);
 
