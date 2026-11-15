@@ -49,29 +49,29 @@ internal class ObjectiveContext : IObjectiveContext
     public void Resolve(bool satisfied)
     {
         ResolvedStatus = satisfied
-            ? ObjectiveStatus.Complete
+            ? ObjectiveStatus.Successful
             : ObjectiveStatus.Failed;
     }
 
-    public bool TryGetState<TState>([NotNullWhen(true)]out TState? state)
+    public bool TryGetData<TData>([NotNullWhen(true)]out TData? data)
     {
-        if (_challengeState.ObjectiveStates.TryGetValue(_objectiveId, out var objectiveState) && objectiveState is { Data: TState typedState })
+        if (_challengeState.ObjectiveStates.TryGetValue(_objectiveId, out var objectiveData) && objectiveData is { Data: TData typedData })
         {
-            state = typedState;
+            data = typedData;
             return true;
         }
 
-        state = default;
+        data = default;
         return false;
     }
 
-    public void SetState<TState>(TState state)
-        where TState: ICloneable
+    public void SetData<TData>(TData data)
+        where TData: IObjectiveData
     {
         UpdatedState = true;
         if (_challengeState.ObjectiveStates.TryGetValue(_objectiveId, out var objectiveState))
         {
-            objectiveState.Data = state;
+            objectiveState.Data = data;
             return;
         }
 
@@ -79,7 +79,7 @@ internal class ObjectiveContext : IObjectiveContext
         {
             ObjectiveId = _objectiveId,
             Status = ObjectiveStatus.Active,
-            Data = state
+            Data = data
         };
     }
 

@@ -5,7 +5,10 @@ using System.Linq;
 
 namespace OSK.Petra.Experiences.Objectives.Counter;
 
-public class CounterParameters: ObjectiveParameters<CounterParameters, CounterState>
+/// <summary>
+/// Parameters that are used and able to create <see cref="CounterObjective"/>
+/// </summary>
+public class CounterParameters: ObjectiveParameters<CounterParameters, CounterData>
 {
     #region Static
 
@@ -314,7 +317,7 @@ public class CounterParameters: ObjectiveParameters<CounterParameters, CounterSt
     protected override IChallengeObjective CreateObjective()
         => new CounterObjective(this);
 
-    protected override CounterState GetInitialState()
+    protected override CounterData GetInitialData()
         => InitialValue;
 
     #endregion

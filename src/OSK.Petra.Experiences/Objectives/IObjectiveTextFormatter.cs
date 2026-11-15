@@ -1,7 +1,18 @@
 ﻿namespace OSK.Petra.Experiences.Objectives;
 
-public interface IObjectiveTextFormatter<TParameters, TState>
+/// <summary>
+/// A custom text formatter for an objective
+/// </summary>
+/// <typeparam name="TParameters">The type of parameters associated with the objective</typeparam>
+/// <typeparam name="TData"></typeparam>
+public interface IObjectiveTextFormatter<TParameters, TData>
     where TParameters: ObjectiveParameters
 {
-    string Format(TParameters parameters, TState state);
+    /// <summary>
+    /// Formats the provided parameters and data into a string for display
+    /// </summary>
+    /// <param name="parameters">The parameters associated with the objective</param>
+    /// <param name="data">The data associated with the objective</param>
+    /// <returns>The formatted string</returns>
+    string Format(TParameters parameters, TData data);
 }

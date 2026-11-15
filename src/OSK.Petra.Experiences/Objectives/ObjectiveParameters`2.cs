@@ -1,27 +1,28 @@
 ﻿using OSK.Petra.Experiences.Internal.Services;
+using OSK.Petra.Experiences.Models;
 using System;
 
 namespace OSK.Petra.Experiences.Objectives;
 
-public abstract class ObjectiveParameters<TParameters, TState>: ObjectiveParameters<TParameters>
-    where TParameters: ObjectiveParameters<TParameters, TState>
-    where TState : ICloneable
+public abstract class ObjectiveParameters<TParameters, TData>: ObjectiveParameters<TParameters>
+    where TParameters: ObjectiveParameters<TParameters, TData>
+    where TData : IObjectiveData
 {
     #region Variables
 
-    public IObjectiveTextFormatter<TParameters, TState>? ValueFormatter { get; private set; }
+    public IObjectiveTextFormatter<TParameters, TData>? ValueFormatter { get; private set; }
 
     #endregion
 
     #region Api
 
-    public override ICloneable? GetInitialValue()
-        => GetInitialState();
+    public override IObjectiveData? GetInitialValue()
+        => GetInitialData();
 
-    public string GetValueText(TState state)
+    public string GetValueText(TData state)
         => ValueFormatter?.Format((TParameters)this, state) ?? state.ToString();
 
-    public TParameters WithTextFormatter(IObjectiveTextFormatter<TParameters, TState> formatter)
+    public TParameters WithTextFormatter(IObjectiveTextFormatter<TParameters, TData> formatter)
     {
         ValidateFrozen();
 
@@ -29,10 +30,10 @@ public abstract class ObjectiveParameters<TParameters, TState>: ObjectiveParamet
         return (TParameters)this;
     }
 
-    public TParameters WithTextFormatter(Func<TParameters, TState, string> formatter)
+    public TParameters WithTextFormatter(Func<TParameters, TData, string> formatter)
     {
         ValidateFrozen();
-        ValueFormatter = new FuncTextFormatter<TParameters, TState>(formatter);
+        ValueFormatter = new FuncTextFormatter<TParameters, TData>(formatter);
         return (TParameters)this;
     }
 
@@ -40,7 +41,7 @@ public abstract class ObjectiveParameters<TParameters, TState>: ObjectiveParamet
 
     #region Helpers
 
-    protected abstract TState GetInitialState();
+    protected abstract TData GetInitialData();
 
     #endregion
 }

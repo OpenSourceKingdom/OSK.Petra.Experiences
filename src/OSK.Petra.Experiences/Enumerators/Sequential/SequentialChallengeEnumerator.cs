@@ -5,6 +5,10 @@ using System.Linq;
 
 namespace OSK.Petra.Experiences.Enumerators.Sequential;
 
+/// <summary>
+/// An enumerator for experiences that simply progress in a linear fashion
+/// </summary>
+/// <param name="challenges">The challenges for the experience</param>
 public class SequentialChallengeEnumerator(IEnumerable<IExperienceChallenge> challenges) : IExperienceEnumerator
 {
     #region Variables

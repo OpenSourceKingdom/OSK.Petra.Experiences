@@ -44,13 +44,13 @@ public class TimerObjectiveTests
     {
         // Arrange
         var mockContext = new Mock<IObjectiveContext>();
-        TimerState s;
-        mockContext.Setup(m => m.SetState(It.IsAny<TimerState>()))
-            .Callback((TimerState state) =>
+        TimerData s;
+        mockContext.Setup(m => m.SetData(It.IsAny<TimerData>()))
+            .Callback((TimerData state) =>
             {
                 s = state;
             });
-        mockContext.Setup(m => m.TryGetState(out s))
+        mockContext.Setup(m => m.TryGetData(out s))
             .Returns(true);
 
         var timer = new TimerObjective(new() { Id = "Abc", Timer = TimeSpan.FromMinutes(1) });
@@ -73,13 +73,13 @@ public class TimerObjectiveTests
         // Arrange
         var mockContext = new Mock<IObjectiveContext>();
 
-        TimerState s;
-        mockContext.Setup(m => m.SetState(It.IsAny<TimerState>()))
-            .Callback((TimerState state) =>
+        TimerData s;
+        mockContext.Setup(m => m.SetData(It.IsAny<TimerData>()))
+            .Callback((TimerData state) =>
             {
                 s = state;
             });
-        mockContext.Setup(m => m.TryGetState(out s))
+        mockContext.Setup(m => m.TryGetData(out s))
             .Returns(true);
 
         var timer = new TimerObjective(new() { Id = "Abc", Timer = TimeSpan.FromMinutes(1) });

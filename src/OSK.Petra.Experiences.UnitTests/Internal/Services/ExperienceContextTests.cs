@@ -58,7 +58,7 @@ public class ExperienceContextTests
         // Assert
 
         // No Challenges, so completes
-        Assert.Equal(ExperienceStatus.Complete, _context.Status);
+        Assert.Equal(ExperienceStatus.Successful, _context.Status);
         Assert.Equal(1, triggeredCount);
     }
 
@@ -82,7 +82,7 @@ public class ExperienceContextTests
         // Assert
 
         // No Challenges, so completes
-        Assert.Equal(ExperienceStatus.Complete, _context.Status);
+        Assert.Equal(ExperienceStatus.Successful, _context.Status);
         Assert.Equal(1, triggeredCount);
     }
 
@@ -110,7 +110,7 @@ public class ExperienceContextTests
 
     [Theory]
     [InlineData(ExperienceStatus.Abandoned)]
-    [InlineData(ExperienceStatus.Complete)]
+    [InlineData(ExperienceStatus.Successful)]
     [InlineData(ExperienceStatus.Failed)]
     [InlineData(ExperienceStatus.Unavailable)]
     public void Start_NonAvailableStatus_HasNoEffect(ExperienceStatus status)
@@ -166,7 +166,7 @@ public class ExperienceContextTests
 
     [Theory]
     [InlineData(ExperienceStatus.Available)]
-    [InlineData(ExperienceStatus.Complete)]
+    [InlineData(ExperienceStatus.Successful)]
     [InlineData(ExperienceStatus.Failed)]
     [InlineData(ExperienceStatus.Abandoned)]
     [InlineData(ExperienceStatus.Paused)]

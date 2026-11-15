@@ -12,8 +12,8 @@
 		<NoWarn>CS1591</NoWarn>
 		<Authors>BlankDev117</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Description>Provides a system that handles acquiring things in an application or game - that is, handling data such as tech upgrades, tech trees, unit purchasing, queue/build system, and more.</Description>
-		<PackageTags>OpenSourceKingdom, OpenSource, Petra, Experience Story, Quest, Objective, Mission, Narrative, Challenge </PackageTags>
+		<Description>A library that handles experiences for an application. e.g. Quests, Campaigns, Objectives, etc. A generic logic layer for handling most use cases for story narratives and related data tracking.</Description>
+		<PackageTags>OpenSourceKingdom, OpenSource, Petra, Experience, Story, Quest, Objective, Mission, Narrative, Challenge </PackageTags>
 		<Title>OSK.Petra.Experiences</Title>
 	</PropertyGroup>
 

@@ -92,7 +92,7 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
         }
     }
 
-    public ExperienceState GetState()
+    public ExperienceState GetStateSnapshot()
         => state.Clone();
 
     #endregion
@@ -203,8 +203,8 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
 
         switch (status)
         {
-            case ChallengeStatus.Complete:
-                OnEvent?.Invoke(new ChallengeStatusChangeEvent(this, _activeChallenge.Challenge, ChallengeStatus.Complete));
+            case ChallengeStatus.Successful:
+                OnEvent?.Invoke(new ChallengeStatusChangeEvent(this, _activeChallenge.Challenge, ChallengeStatus.Successful));
                 MoveToNextChallenge();
                 break;
             case ChallengeStatus.Failed:
@@ -234,7 +234,7 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
             details.Objective.Resolve(context, ObjectiveResolutionInitiator.Challenge);
 
             // Defensive: an details that doesn't report is treated as passing only if the challenge is passing
-            details.Status = context.ResolvedStatus.GetValueOrDefault(challengeStatus is ChallengeStatus.Complete ? ObjectiveStatus.Complete : ObjectiveStatus.Failed);
+            details.Status = context.ResolvedStatus.GetValueOrDefault(challengeStatus is ChallengeStatus.Successful ? ObjectiveStatus.Successful : ObjectiveStatus.Failed);
 
             if (context.UpdatedState)
             {
@@ -245,7 +245,7 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
 
         
         // A settled guard can report failure, so re-check before declaring success
-        return challengeStatus is ChallengeStatus.Complete
+        return challengeStatus is ChallengeStatus.Successful
             ? EvaluateChallenge(activeChallenge)
             : challengeStatus;
     }
@@ -279,12 +279,12 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
 
         return failedFlag 
                 ? ChallengeStatus.Failed
-                : hasActiveObjectives ? ChallengeStatus.Active : ChallengeStatus.Complete;
+                : hasActiveObjectives ? ChallengeStatus.Active : ChallengeStatus.Successful;
     }
 
     private void MoveToNextChallenge()
     {
-        var status = ExperienceStatus.Complete;
+        var status = ExperienceStatus.Successful;
         var transitionContext = contextProvider.GetTransitionContext(state);
         if (_experienceEnumerator.MoveNext(transitionContext))
         {
@@ -322,7 +322,7 @@ internal class ExperienceContext(IExperience experience, ExperienceState state, 
 
             if (OnEvent is not null)
             {
-                OnEvent.Invoke(new ChallengeStatusChangeEvent(this, _experienceEnumerator.Current, ChallengeStatus.Active));
+                OnEvent.Invoke(new ChallengeAddedEvent(this, _experienceEnumerator.Current));
                 _activeChallenge.ForEach((_, details) =>
                 {
                     OnEvent.Invoke(new ObjectiveAddedEvent(this, _experienceEnumerator.Current, details.Objective));

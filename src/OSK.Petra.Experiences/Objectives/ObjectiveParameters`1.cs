@@ -20,6 +20,11 @@ public abstract class ObjectiveParameters<TParameters>: ObjectiveParameters
         return (TParameters)this;
     }
 
+    /// <summary>
+    /// Sets the name for the objective
+    /// </summary>
+    /// <param name="name">The name or title for the objective to use</param>
+    /// <returns>The parameters, for chaining</returns>
     public TParameters WithName(string name)
     {
         ValidateFrozen();
@@ -27,6 +32,11 @@ public abstract class ObjectiveParameters<TParameters>: ObjectiveParameters
         return (TParameters)this;
     }
 
+    /// <summary>
+    /// Sets the description text for the objective
+    /// </summary>
+    /// <param name="description">Insightful text to the purpose of the objective</param>
+    /// <returns>The parameters, for chaining</returns>
     public TParameters WithDescription(string description)
     {
         ValidateFrozen();

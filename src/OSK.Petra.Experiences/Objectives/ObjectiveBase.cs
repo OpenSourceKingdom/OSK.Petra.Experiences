@@ -3,6 +3,10 @@ using System;
 
 namespace OSK.Petra.Experiences.Objectives;
 
+/// <summary>
+/// A base class for initial logic for challenge objectives that utilize a set of <see cref="ObjectiveParameters"/>
+/// </summary>
+/// <typeparam name="TParameters">The type of parameters the obejctive uses</typeparam>
 public abstract class ObjectiveBase<TParameters>: IChallengeObjective
     where TParameters: ObjectiveParameters
 {
@@ -34,7 +38,7 @@ public abstract class ObjectiveBase<TParameters>: IChallengeObjective
 
     public ObjectiveResolutionBehavior ResolutionBehavior => Parameters.GetEffectiveResolutionBehavior();
 
-    public ICloneable? GetInitialValue()
+    public IObjectiveData? GetInitialValue()
         => Parameters.GetInitialValue();
 
     public abstract string GetValueText(ObjectiveState state);

@@ -117,7 +117,7 @@ public class ObjectiveContextTests
         context.Resolve(true);
 
         // Assert
-        Assert.Equal(ObjectiveStatus.Complete, context.ResolvedStatus);
+        Assert.Equal(ObjectiveStatus.Successful, context.ResolvedStatus);
     }
 
     [Fact]

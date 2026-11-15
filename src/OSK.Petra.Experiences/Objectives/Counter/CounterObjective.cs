@@ -3,13 +3,17 @@ using System;
 
 namespace OSK.Petra.Experiences.Objectives.Counter;
 
-public class CounterObjective(CounterParameters parameters) : EventObjectiveBase<CounterParameters, CounterState, ICounterEvent>(parameters)
+/// <summary>
+/// An objective that uses a counter to determine whether requirements are met
+/// </summary>
+/// <param name="parameters">The count parameters used for the objectives</param>
+public class CounterObjective(CounterParameters parameters) : EventObjectiveBase<CounterParameters, CounterData, ICounterEvent>(parameters)
 {
     #region EventObjectiveBase Overrides
 
     public override void Resolve(IObjectiveContext context, ObjectiveResolutionInitiator initiator)
     {
-        var state = context.TryGetState<CounterState>(out var counterState)
+        var state = context.TryGetData<CounterData>(out var counterState)
             ? counterState.Value
             : Parameters.InitialValue;
 
@@ -26,9 +30,9 @@ public class CounterObjective(CounterParameters parameters) : EventObjectiveBase
             return;
         }
 
-        var state = context.GetOrCreateState(_ => (CounterState)Parameters.InitialValue);
+        var state = context.GetOrCreateData(_ => (CounterData)Parameters.InitialValue);
         state = state.Value + counterEvent.Delta;
-        context.SetState(state);
+        context.SetData(state);
 
         if (IsMet(state, Parameters.ThresholdValue, Parameters.Comparison))
         {

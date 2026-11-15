@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using OSK.Extensions.Petra.Experiences.Messaging;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using OSK.Messages.Abstractions;
 using OSK.Petra.Experiences.Internal;
 using OSK.Petra.Experiences.Internal.Services;
 using OSK.Petra.Experiences.Ports;
+using OSK.Petra.Experiences.Messaging;
 
 namespace OSK.Petra.Experiences;
 
@@ -11,10 +12,14 @@ public static class ServiceCollectionExtensions
 {
     extension(IServiceCollection services)
     {
+        /// <summary>
+        /// Adds experience services and dependencies to the service collection
+        /// </summary>
+        /// <returns>The services for chaining</returns>
         public IServiceCollection AddExperiences()
         {
-            services.AddSingleton<IExperienceService, ExperienceService>();
-            services.AddTransient<IExperienceContextProvider, ExperienceContextProvider>();
+            services.TryAddSingleton<IExperienceService, ExperienceService>();
+            services.TryAddTransient<IExperienceContextProvider, ExperienceContextProvider>();
 
             services.TryAddMessageRecipient<ExperienceMessageHandler>();
 

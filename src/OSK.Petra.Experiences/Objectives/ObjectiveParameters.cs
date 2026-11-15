@@ -3,6 +3,9 @@ using System;
 
 namespace OSK.Petra.Experiences.Objectives;
 
+/// <summary>
+/// A base class for objective parameters
+/// </summary>
 public abstract class ObjectiveParameters
 {
     #region Variables
@@ -13,16 +16,28 @@ public abstract class ObjectiveParameters
 
     private bool _isRequired = true;
 
+    /// <summary>
+    /// A unique id for the objective
+    /// </summary>
     public required string Id { get; init; }
 
+    /// <summary>
+    /// A name or title for the objective
+    /// </summary>
     public string Name 
     { 
         get => string.IsNullOrWhiteSpace(_name) ? Id : _name;
         private set => _name = value;
     }
 
+    /// <summary>
+    /// Insightful text that describes the purpose of the objective
+    /// </summary>
     public string Description { get; private set; } = string.Empty;
 
+    /// <summary>
+    /// Whether the objective is required
+    /// </summary>
     public bool IsRequired 
     {
         get => _isRequired;
@@ -32,28 +47,51 @@ public abstract class ObjectiveParameters
         } 
     } 
 
+    /// <summary>
+    /// The expectation of the objective when it is resolved
+    /// </summary>
     public ObjectiveExpectation Expectation { get; init; } = ObjectiveExpectation.Met;
 
+    /// <summary>
+    /// The style of resolution for the objective
+    /// </summary>
     public ObjectiveResolutionBehavior? ResolutionBehavior { get; init; }
 
     #endregion
 
     #region Api
 
-    public abstract ICloneable? GetInitialValue();
+    /// <summary>
+    /// Gets the initial data value for the objective
+    /// </summary>
+    /// <returns>The initial objective data</returns>
+    public abstract IObjectiveData? GetInitialValue();
 
+    /// <summary>
+    /// Converts the parameters to an objective
+    /// </summary>
+    /// <returns>The objective the parameters refer to</returns>
     public IChallengeObjective ToObjective()
     {
         ValidateParameters();
         return CreateObjective();
     }
 
+    /// <summary>
+    /// The effective resolution behavior for the objective
+    /// </summary>
+    /// <returns>The actual effective resolution behavior</returns>
     public ObjectiveResolutionBehavior GetEffectiveResolutionBehavior()
         => ResolutionBehavior
            ?? (Expectation is ObjectiveExpectation.Met
                 ? ObjectiveResolutionBehavior.SelfResolution
                 : ObjectiveResolutionBehavior.ChallengeResolution);
 
+    /// <summary>
+    /// Validates whether the parameter settings. This is expected to throw if settings are invalid.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">If the id is null or empty</exception>
+    /// <exception cref="InvalidOperationException">If the objective expectation and resolution behavior cause an invalid parameter state</exception>
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(Id))

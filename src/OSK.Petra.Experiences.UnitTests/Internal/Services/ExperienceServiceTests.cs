@@ -187,7 +187,7 @@ public class ExperienceServiceTests
             .Returns(Guid.NewGuid());
         _service.Add(exp1.Object);
 
-        var options = new ExperienceSearchOptions().WithStatus(ExperienceStatus.Complete);
+        var options = new ExperienceSearchOptions().WithStatus(ExperienceStatus.Successful);
 
         // Act
         var contexts = _service.GetContexts(options);

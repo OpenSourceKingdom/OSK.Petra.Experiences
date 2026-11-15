@@ -1,5 +1,8 @@
 ﻿namespace OSK.Petra.Experiences.Models;
 
+/// <summary>
+/// The behavior an objective's internal logic takes to finish being processed
+/// </summary>
 public enum ObjectiveResolutionBehavior
 {
     /// <summary>

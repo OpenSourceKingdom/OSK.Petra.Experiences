@@ -7,21 +7,28 @@ public static class ObjectiveContextExtensions
 {
     extension(IObjectiveContext context)
     {
-        public TState GetOrCreateState<TState>(Func<IObjectiveContext, TState> stateFactory)
-            where TState: ICloneable
+        /// <summary>
+        /// Attempts to get the data from the context, using the factory as a fallback if not present
+        /// </summary>
+        /// <typeparam name="TData">The type of the data to get or create</typeparam>
+        /// <param name="dataFactory">The factory to use for creating the data if it is not present</param>
+        /// <returns>The data, either from the context or created by the factory</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the dataFactory is null</exception>
+        public TData GetOrCreateData<TData>(Func<IObjectiveContext, TData> dataFactory)
+            where TData : IObjectiveData
         {
-            if (stateFactory is null)
+            if (dataFactory is null)
             {
-                throw new ArgumentNullException(nameof(stateFactory));
+                throw new ArgumentNullException(nameof(dataFactory));
             }
 
-            if (!context.TryGetState<TState>(out var state))
+            if (!context.TryGetData<TData>(out var data))
             {
-                state = stateFactory(context);
-                context.SetState(state);
+                data = dataFactory(context);
+                context.SetData(data);
             }
 
-            return state;
+            return data;
         }
     }
 }

@@ -3,18 +3,22 @@ using System;
 
 namespace OSK.Petra.Experiences.Objectives.Timer;
 
-public class TimerObjective(TimerParameters parameters) : ObjectiveBase<TimerParameters, TimerState>(parameters), ITimeObjective
+/// <summary>
+/// An objective that uses a timer to determine whether requirements are met
+/// </summary>
+/// <param name="parameters">The timer parameters used for the objectives</param>
+public class TimerObjective(TimerParameters parameters) : ObjectiveBase<TimerParameters, TimerData>(parameters), ITimeObjective
 {
     #region ITimeObjective
 
     public void ProcessTick(IObjectiveContext context, TimeSpan deltaTime)
     {
-        var state = context.GetOrCreateState(_ => (TimerState)Parameters.Timer);
+        var state = context.GetOrCreateData(_ => (TimerData)Parameters.Timer);
 
         var remaining = state.Value - deltaTime;
         state = remaining < TimeSpan.Zero ? TimeSpan.Zero : remaining;
 
-        context.SetState(state);
+        context.SetData(state);
 
         if (state.Value == TimeSpan.Zero)
         {
@@ -25,7 +29,7 @@ public class TimerObjective(TimerParameters parameters) : ObjectiveBase<TimerPar
 
     public override void Resolve(IObjectiveContext context, ObjectiveResolutionInitiator initiator)
     {
-        var remaining = context.TryGetState<TimerState>(out var state)
+        var remaining = context.TryGetData<TimerData>(out var state)
             ? state.Value
             : Parameters.Timer;
 
